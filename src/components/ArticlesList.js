@@ -1,6 +1,8 @@
-import articles from "../pages/article-content";
+//import articles from "../pages/article-content"; // does not give flexibility
 import { Link } from "react-router-dom";
-const ArticlesList = () => {
+
+// for displaying popular articles
+const ArticlesList = ({ articles }) => {
   return (
     <>
       <h3>Articles</h3>
