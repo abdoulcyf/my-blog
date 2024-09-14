@@ -8,7 +8,7 @@ const ArticlesListPage = () => {
         <Link
           className="article-list-item"
           to={`/articles/${article.name}`}
-          key={article.title}
+          key={article.name}
         >
           <h4>{article.title}</h4>
           <p>{article.content[0].substring(0, 150)}...</p>
