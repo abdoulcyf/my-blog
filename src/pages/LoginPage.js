@@ -3,9 +3,9 @@ import { useState } from "react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const LoginPage = () => {
-  const { email, setEmail } = useState("");
-  const { password, setPassword } = useState("");
-  const { error, setError } = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
@@ -22,7 +22,6 @@ const LoginPage = () => {
       <h1>Log In</h1>
       {error && <p className="error">{error}</p>}
       <input
-        type="email"
         placeholder="Your email address"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
