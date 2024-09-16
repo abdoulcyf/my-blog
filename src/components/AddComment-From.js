@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 
 const AddCommentForm = ({ articleName, onArticleUpdated }) => {
+  // articleName == articleId in article-content
   const [name, setName] = useState("");
   const [commentText, setCommentText] = useState("");
   const addComment = async () => {
