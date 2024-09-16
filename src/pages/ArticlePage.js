@@ -13,6 +13,7 @@ const ArticlePage = () => {
   useEffect(() => {
     const loadArticleInfo = async () => {
       const response = await axios.get(`/api/articles/${articleId}`);
+      console.log(response.data);
       const newArticleInfo = response.data;
       setArticleInfo(newArticleInfo);
     };
@@ -45,10 +46,10 @@ const ArticlePage = () => {
         <p key={index}>{paragraph}</p>
       ))}
       <AddCommentForm
-        articleName={article}
+        articleName={articleId}
         onArticleUpdated={(updatedArticle) => setArticleInfo(updatedArticle)}
       />
-      <CommentList comments={articleInfo.comments} />
+      <CommentList comments={articleInfo.comments || []} />
     </>
   );
 };
