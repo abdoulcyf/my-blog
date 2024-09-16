@@ -10,7 +10,7 @@ const ArticlesList = ({ articles }) => {
         <Link
           className="article-list-item"
           to={`/articles/${article.name}`}
-          key={article.name}
+          key={article.name + ": " + article.title}
         >
           <h4>{article.title}</h4>
           <p>{article.content[0].substring(0, 150)}...</p>
