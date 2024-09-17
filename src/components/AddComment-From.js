@@ -1,41 +1,44 @@
 import axios from "axios";
 import { useState } from "react";
+import useUser from "../hooks/useUser";
 
 const AddCommentForm = ({ articleName, onArticleUpdated }) => {
-  // articleName == articleId in article-content
-  const [name, setName] = useState("");
   const [commentText, setCommentText] = useState("");
+  const { user, isLoading } = useUser(); // Destructure user and isLoading from useUser
+
   const addComment = async () => {
+    if (isLoading) return; // Wait until the user is fully loaded
+    if (!user) {
+      console.error("No user is currently logged in");
+      return;
+    }
+
     try {
+      const token = await user.getIdToken();
+      const headers = token ? { authtoken: token } : {};
+
       const response = await axios.post(
         `/api/articles/${articleName}/comments`,
         {
-          postedBy: name,
+          postedBy: user.email,
           text: commentText,
-        }
+        },
+        { headers }
       );
-      console.log("updated Article: ", response.data);
+
       const updatedArticle = response.data;
       onArticleUpdated(updatedArticle);
-      setName("");
       setCommentText("");
     } catch (error) {
       console.error("Error adding comment:", error);
     }
   };
+
   return (
-    <div className="add-comment-from">
+    <div className="add-comment-form">
       <h3>Add a comment</h3>
+      {user && <p>You are posting as {user.email}</p>}
       <label>
-        Name:
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          type="text"
-        />
-      </label>
-      <label>
-        Comment:
         <textarea
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}
@@ -43,7 +46,9 @@ const AddCommentForm = ({ articleName, onArticleUpdated }) => {
           cols={50}
         />
       </label>
-      <button onClick={addComment}>Add Comment</button>
+      <button onClick={addComment} disabled={isLoading}>
+        Add Comment
+      </button>
     </div>
   );
 };
