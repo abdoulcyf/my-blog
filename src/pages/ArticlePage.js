@@ -8,15 +8,18 @@ import AddCommentForm from "../components/AddComment-From";
 import useUser from "../hooks/useUser";
 
 const ArticlePage = () => {
-  const [articleInfo, setArticleInfo] = useState({ upvotes: 0, comments: [] });
+  const [articleInfo, setArticleInfo] = useState({
+    upvotes: 0,
+    comments: [],
+    canUpvote: false,
+  });
   const { articleId } = useParams();
-
+  const { canUpvote } = articleInfo;
   const { user, isLoading } = useUser();
 
   //----------------------------------------------
   useEffect(() => {
     const loadArticleInfo = async () => {
-      if (isLoading) return; // Wait until the user is fully loaded
       if (!user) {
         console.error("No user is currently logged in");
         return;
@@ -30,8 +33,12 @@ const ArticlePage = () => {
       const newArticleInfo = response.data;
       setArticleInfo(newArticleInfo);
     };
-    loadArticleInfo();
-  }, [articleId, user]);
+
+    if (!isLoading) {
+      // Wait until the user is fully loaded
+      loadArticleInfo();
+    }
+  }, [isLoading, articleId, user]);
 
   //------------------------------------------------------
   const article = articles.find((article) => article.name === articleId);
@@ -72,7 +79,7 @@ const ArticlePage = () => {
             onClick={addUpvote}
             disabled={articleInfo.comments.includes(user.email)}
           >
-            Upvote
+            {canUpvote ? "Upvote" : "Already Upvoted"}
           </button>
         ) : (
           <button>Log in to upvote</button>
