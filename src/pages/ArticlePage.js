@@ -13,6 +13,7 @@ const ArticlePage = () => {
 
   const { user, isLoading } = useUser();
 
+  //----------------------------------------------
   useEffect(() => {
     const loadArticleInfo = async () => {
       if (isLoading) return; // Wait until the user is fully loaded
@@ -32,6 +33,7 @@ const ArticlePage = () => {
     loadArticleInfo();
   }, [articleId, user]);
 
+  //------------------------------------------------------
   const article = articles.find((article) => article.name === articleId);
 
   const addUpvote = async () => {
@@ -57,6 +59,7 @@ const ArticlePage = () => {
     }
   };
 
+  //-----------------------------------------------------
   if (!article) {
     return <NotFoundPage />;
   }
