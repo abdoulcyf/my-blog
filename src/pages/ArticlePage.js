@@ -15,26 +15,48 @@ const ArticlePage = () => {
 
   useEffect(() => {
     const loadArticleInfo = async () => {
-      const response = await axios.get(`/api/articles/${articleId}`);
-      console.log(response.data);
+      if (isLoading) return; // Wait until the user is fully loaded
+      if (!user) {
+        console.error("No user is currently logged in");
+        return;
+      }
+      const token = user && (await user.getIdToken());
+      const headers = token ? { authtoken: token } : {};
+      const response = await axios.get(`/api/articles/${articleId}`, {
+        headers,
+      });
+      //  console.log(response.data);
       const newArticleInfo = response.data;
       setArticleInfo(newArticleInfo);
     };
     loadArticleInfo();
-  }, [articleId]);
+  }, [articleId, user]);
 
   const article = articles.find((article) => article.name === articleId);
 
   const addUpvote = async () => {
-    const response = await axios.put(`/api/articles/${articleId}/upvotes`);
-    const updatedArticle = response.data;
-    setArticleInfo(updatedArticle);
+    if (isLoading) return; // Wait until the user is fully loaded
+    if (!user) {
+      console.error("No user is currently logged in");
+      return;
+    }
+
+    try {
+      const token = await user.getIdToken();
+      const headers = token ? { authtoken: token } : {};
+      const response = await axios.put(
+        `/api/articles/${articleId}/upvotes`,
+        null,
+        { headers }
+      );
+
+      const updatedArticle = response.data;
+      setArticleInfo(updatedArticle);
+    } catch (error) {
+      console.error("Error upvoting article:", error);
+    }
   };
 
-  // const otherArticles = articles.filter((article) => article.name !== articleId);
-  // const otherArticle = otherArticles.length > 0 ? otherArticles[0] : null;
-
-  // in case article is not found, display NotFoundPage
   if (!article) {
     return <NotFoundPage />;
   }
@@ -43,7 +65,12 @@ const ArticlePage = () => {
       <h1>{article.title}</h1>
       <div className="upvote-section">
         {user ? (
-          <button onClick={addUpvote}>Upvote</button>
+          <button
+            onClick={addUpvote}
+            disabled={articleInfo.comments.includes(user.email)}
+          >
+            Upvote
+          </button>
         ) : (
           <button>Log in to upvote</button>
         )}
